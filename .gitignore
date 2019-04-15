@@ -1,32 +1,65 @@
-# Prerequisites
-*.d
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+struct process
+{   
+    char pro_name;
+    int arrival_t,burst_t,comp_t,waiting_t,turnaround_t,priority,rt;
+    int status;
+}proc_queue[10];
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+void get_wt_time(int wt[],int lim) 
+{ 
+int service[50],i; 
+service[0]=0; 
+wt[0]=0; 
+for(i=1;i<lim;i++) 
+{ 
+service[i]=proc_queue[i-1].burst_t+service[i-1]; 
+  
+wt[i]=service[i]-proc_queue[i].arrival_t+1;
+      
+    if(wt[i]<0) 
+    { 
+    wt[i]=0; 
+    } 
+} 
+} 
+void get_tat_time(int tat[],int wt[],int lim) 
+{ 
+int i;
+for(i=0;i<lim;i++) 
+{ 
+    tat[i]=proc_queue[i].burst_t+wt[i]; 
+} 
+} 
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+void fixed_Priority_Scheduling(int limit2)
+{
+int wt[50],tat[50]; 
+double wavg=0,tavg=0; 
+int lim=limit2;
+get_wt_time(wt,lim); 
+get_tat_time(tat,wt,lim); 
+      
+int stime[50],ctime[50]; 
+stime[0]=1; 
+ctime[0]=stime[0]+tat[0]; 
+int i;
+for(i=1;i<lim;i++) 
+    { 
+        stime[i]=ctime[i-1]; 
+        ctime[i]=stime[i]+tat[i]-wt[i]; 
+    } 
+printf("Process_no\tArrival Time\tBurst Time\tStart_time\tComplete_time\tTurn_Around_Time\tWaiting_Time\n"); 
+for(i=0;i<lim;i++) 
+    { 
+      wavg += wt[i]; 
+      tavg += tat[i]; 
+      printf("%c\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t\t%d\n",proc_queue[i].pro_name,proc_queue[i].arrival_t,proc_queue[i].burst_t,stime[i],ctime[i],tat[i],wt[i]);
+    } 
+    printf("Average waiting time is : "); 
+    printf("%f\n",wavg/(float)lim); 
+    printf("average turnaround time : "); 
+    printf("%f\n",tavg/(float)lim,"\n"); 
+}
